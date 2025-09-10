@@ -9,18 +9,17 @@ export default function Home() {
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
-            Bienvenido a Mi Sitio Web
+            Bienvenido a Mi Sitio Web sobre patos
           </h1>
           <p className="hero-description">
-            Descubre soluciones innovadoras y servicios de calidad 
-            para hacer crecer tu negocio en la era digital.
+            Los patos son geniales
           </p>
           <div className="hero-buttons">
-            <Link href="/servicios" className="btn btn-primary">
-              Nuestros Servicios
+            <Link href="/login" className="btn btn-primary">
+              Inicia sesion
             </Link>
-            <Link href="/contacto" className="btn btn-secondary">
-              Contactar Ahora
+            <Link href="/signup" className="btn btn-secondary">
+              Crea una cuenta.
             </Link>
           </div>
         </div>
@@ -32,14 +31,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="features-section">
         <div className="container">
-          <h2 className="section-title">¿Por qué elegirnos?</h2>
+          <h2 className="section-title">¿Por qué Patos?</h2>
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">🚀</div>
-              <h3>Rápido y Eficiente</h3>
+              <h3>Aves Rápidas</h3>
               <p>Soluciones optimizadas para máximo rendimiento y velocidad.</p>
             </div>
             <div className="feature-card">
@@ -53,17 +51,6 @@ export default function Home() {
               <p>Protección de datos y máxima seguridad en todos nuestros servicios.</p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="container">
-          <h2>¿Listo para comenzar?</h2>
-          <p>Únete a nuestros clientes satisfechos hoy mismo.</p>
-          <Link href="/contacto" className="btn btn-large">
-            Empezar Ahora
-          </Link>
         </div>
       </section>
     </div>
