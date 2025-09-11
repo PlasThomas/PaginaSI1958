@@ -8,5 +8,5 @@ cd ../backend
 echo "Instalacion de backend"
 python -m venv flaskback
 echo "- Creacion de entorno virtual"
-pip install Flask flask-cors pymongo python-dotenv bcrypt
+pip install Flask flask-cors pymongo python-dotenv bcrypt jwt
 echi "- Instalacion de paquetes de pip"
