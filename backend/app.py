@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 import bcrypt
-import jwt
+from datetime import datetime
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -35,12 +35,12 @@ except Exception as e:
 users_collection = db['usuarios']
 
 # APIs de backend.
-@app.route("/api/login", method=['POST'])
+@app.route("/api/login", methods=['POST'])
 def login():
     try:
         data = request.get_json()
         # Validar datos requeridos
-        if not data.get('username') or not data.get('password'):
+        if not data.get('email') or not data.get('password'):
             return jsonify({
                 'success': False,
                 'error': 'Usuario y contraseña son requeridos'
@@ -48,7 +48,7 @@ def login():
         
         # Buscar usuario
         user = users_collection.find_one({
-            'username': data['username'],
+            'email': data['email'],
             'is_active': True
         })
         
@@ -64,16 +64,14 @@ def login():
                 'success': False,
                 'error': 'Contraseña incorrecta'
             }), 401
-        # Generar token
-        token = generate_token(str(user['_id']), user['username'])
         
         return jsonify({
             'success': True,
             'message': 'Login exitoso',
-            'token': token,
             'user': {
                 'id': str(user['_id']),
-                'username': user['username'],
+                'name': user['name'],
+                'lastname': user['lastname'],
                 'email': user['email']
             }
         })
@@ -83,10 +81,73 @@ def login():
             'error': 'Error interno del servidor'
         }), 500
 
-@app.route("/api/signup", method=['POST'])
+@app.route("/api/signup", methods=['POST'])
 def signup():
-    pass
+    try:
+        data = request.get_json()
+        
+        # Validar datos requeridos
+        required_fields = ['name','lastname', 'email', 'password', 'confirm_password']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({
+                    'success': False,
+                    'error': f'El campo {field} es requerido'
+                }), 400
+        
+        # Verificar que las contraseñas coincidan
+        if data['password'] != data['confirm_password']:
+            return jsonify({
+                'success': False,
+                'error': 'Las contraseñas no coinciden'
+            }), 400
+        
+        # Verificar si el usuario ya existe
+        if users_collection.find_one({'$or': [
+            {'email': data['email']}
+        ]}):
+            return jsonify({
+                'success': False,
+                'error': 'El usuario o email ya existe'
+            }), 400
+        
+        # Encriptar contraseña
+        hashed_password = encrypt_password(data['password'])
+        
+        # Crear usuario
+        user_data = {
+            'name': data['name'],
+            'lastname': data['lastname'],
+            'email': data['email'],
+            'role': 'admin',
+            'password': hashed_password,
+            'created_at': datetime.now(),
+            'is_active': True
+        }
+        
+        result = users_collection.insert_one(user_data)
+        user_id = str(result.inserted_id)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Usuario registrado exitosamente',
+            'user': {
+                'id': user_id,
+                'name': data['name'],
+                'lastname': data['lastname'],
+                'email': data['email']
+            }
+        }), 201
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': 'Error interno del servidor'
+        }), 500
 
-@app.route("/api/logout", method=['POST'])
+@app.route("/api/logout", methods=['POST'])
 def logout():
-    pass
+    return jsonify({
+        'success': True,
+        'message': 'Sesión cerrada exitosamente'
+    })
