@@ -4,17 +4,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { signup } from '../util/apis';
 
 export default function RegisterPage() {
-  // Estados para almacenar los valores del formulario
   const [formData, setFormData] = useState({
-    nombre: '',
-    apellido: '',
+    name: '',
+    lastname: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
   
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -30,28 +31,49 @@ export default function RegisterPage() {
   // Función que se ejecuta al enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validaciones básicas
-    if (formData.password !== formData.confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
-    
-    if (formData.password.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres');
+  setError(null);
+
+  // Validaciones básicas en cliente
+  if (formData.password !== formData.confirmPassword) {
+    setError('Las contraseñas no coinciden');
+    return;
+  }
+  if (formData.password.length < 6) {
+    setError('La contraseña debe tener al menos 6 caracteres');
+    return;
+  }
+
+  setIsLoading(true);
+  try {
+    const userData = {
+      name: formData.name,
+      lastname: formData.lastname,
+      email: formData.email,
+      password: formData.password,
+      confirm_password: formData.confirmPassword 
+    };
+
+    const res = await signup(userData);
+
+    if (!res) {
+      setError('Respuesta inválida del servidor');
       return;
     }
 
-    setIsLoading(true);
-    
-    // Simulación de registro (en una app real, aquí harías una petición a tu API)
-    setTimeout(() => {
-      console.log('Datos de registro:', formData);
-      setIsLoading(false);
-      alert('¡Registro exitoso!');
-      router.push('/login'); // Redirige al login después del registro
-    }, 1500);
-  };
+    if (!res.success) {
+      setError(res.error || 'Error al registrar usuario');
+      return;
+    }
+
+      alert(res.message || 'Registro exitoso'); // Puedes reemplazar alert por un modal si quieres
+      router.push('/login');
+  } catch (err) {
+    console.error('Error en signup:', err);
+    setError('Error de red, intenta de nuevo más tarde');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="register-container">
@@ -63,14 +85,14 @@ export default function RegisterPage() {
           {/* Nombre y Apellido en la misma línea */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="nombre" className="form-label">
+              <label htmlFor="name" className="form-label">
                 Nombre
               </label>
               <input
                 type="text"
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 className="form-input"
                 placeholder="Tu nombre"
@@ -85,9 +107,9 @@ export default function RegisterPage() {
               </label>
               <input
                 type="text"
-                id="apellido"
-                name="apellido"
-                value={formData.apellido}
+                id="lastname"
+                name="lastname"
+                value={formData.lastname}
                 onChange={handleInputChange}
                 className="form-input"
                 placeholder="Tu apellido"

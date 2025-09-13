@@ -2,6 +2,7 @@
 import './globals.css';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
+import {AuthProvider} from './context/AuthContxt';
 
 export const metadata = {
   title: 'Esqueleto',
@@ -12,11 +13,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body>
-        <Navbar />
-        <main className="main-content">
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <main className="main-content">
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

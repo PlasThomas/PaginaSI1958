@@ -1,9 +1,10 @@
-// app/login/page.js
-'use client'; // Necesario porque usamos useState
+'use client'; 
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { login } from '../util/apis';
+import { useAuth } from '../context/AuthContxt'; 
 
 export default function LoginPage() {
   // Estados para almacenar los valores de los inputs
@@ -11,23 +12,31 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  // Hook para navegar entre páginas
+  const [error, setError] = useState(null);
   const router = useRouter();
+  const { login: authLogin } = useAuth();
 
   // Función que se ejecuta al enviar el formulario
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evita que la página se recargue
-    
+    e.preventDefault();
     setIsLoading(true);
-    
-    // Aquí iría la lógica real de autenticación
-    // Por ahora simulamos un login exitoso después de 1 segundo
-    setTimeout(() => {
-      console.log('Email:', email);
-      console.log('Password:', password);
+    setError(null);
+
+    try {
+      const response = await login({ email, password });
+
+      if (!response.success) {
+        setError(response.error);
+      } else {
+        console.log('Usuario logueado:', response.user);
+        authLogin(response.user);
+        router.push(response.user.role === "admin" ? "/admin" : "/users");
+      }
+    } catch (err) {
+      setError('Error al conectar con el servidor');
+    } finally {
       setIsLoading(false);
-      router.push('/dashboard'); // Redirige al dashboard después del login
-    }, 1000);
+    }
   };
 
   return (

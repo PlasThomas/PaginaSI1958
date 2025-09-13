@@ -46,7 +46,6 @@ def login():
                 'error': 'Usuario y contraseña son requeridos'
             }), 400
         
-        # Buscar usuario
         user = users_collection.find_one({
             'email': data['email'],
             'is_active': True
@@ -58,7 +57,6 @@ def login():
                 'error': 'Usuario no encontrado'
             }), 404
         
-        # Verificar contraseña
         if not check_password(data['password'], user['password']):
             return jsonify({
                 'success': False,
@@ -72,6 +70,7 @@ def login():
                 'id': str(user['_id']),
                 'name': user['name'],
                 'lastname': user['lastname'],
+                'role': user['role'],
                 'email': user['email']
             }
         })
@@ -86,7 +85,6 @@ def signup():
     try:
         data = request.get_json()
         
-        # Validar datos requeridos
         required_fields = ['name','lastname', 'email', 'password', 'confirm_password']
         for field in required_fields:
             if not data.get(field):
@@ -95,14 +93,12 @@ def signup():
                     'error': f'El campo {field} es requerido'
                 }), 400
         
-        # Verificar que las contraseñas coincidan
         if data['password'] != data['confirm_password']:
             return jsonify({
                 'success': False,
                 'error': 'Las contraseñas no coinciden'
             }), 400
         
-        # Verificar si el usuario ya existe
         if users_collection.find_one({'$or': [
             {'email': data['email']}
         ]}):
@@ -111,15 +107,13 @@ def signup():
                 'error': 'El usuario o email ya existe'
             }), 400
         
-        # Encriptar contraseña
         hashed_password = encrypt_password(data['password'])
         
-        # Crear usuario
         user_data = {
             'name': data['name'],
             'lastname': data['lastname'],
             'email': data['email'],
-            'role': 'admin',
+            'role': 'user',
             'password': hashed_password,
             'created_at': datetime.now(),
             'is_active': True
@@ -135,6 +129,7 @@ def signup():
                 'id': user_id,
                 'name': data['name'],
                 'lastname': data['lastname'],
+                'role': 'user',
                 'email': data['email']
             }
         }), 201
