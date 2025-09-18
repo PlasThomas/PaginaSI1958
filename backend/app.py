@@ -1,15 +1,16 @@
 from flask import Flask, jsonify, request
 import bcrypt
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
-import os
+import os, jwt
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Funciones de bcrypt
 def encrypt_password(password):
@@ -22,6 +23,25 @@ def check_password(password, hashed_password):
         password.encode('utf-8'), 
         hashed_password.encode('utf-8')
     )
+
+# Función de JWT
+def generate_token(user_id, email, role):
+    payload = {
+        "id": str(user_id),
+        "email": email,
+        "role": role,
+        "exp": datetime.utcnow() + timedelta(hours=4)  # expira en 1 hora
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+def verify_token(token):
+    try:
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return decoded
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
 
 # Conexion con base de datos.
 try:
@@ -63,9 +83,12 @@ def login():
                 'error': 'Contraseña incorrecta'
             }), 401
         
+        token = generate_token(user['_id'], user['email'], user['role'])
+
         return jsonify({
             'success': True,
             'message': 'Login exitoso',
+            "token": token,
             'user': {
                 'id': str(user['_id']),
                 'name': user['name'],
