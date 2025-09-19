@@ -1,3 +1,4 @@
 backend/__pycache__
 backend/flaskback
 backend/.env
+frontend/.env.local

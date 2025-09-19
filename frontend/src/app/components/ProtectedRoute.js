@@ -11,13 +11,13 @@ export default function ProtectedRoute({
   minRole = null,
   fallbackPath = '/unauthorized'
 }) {
-  const { user, loading, hasRole, hasAnyRole, hasMinRole } = useAuth();
+  const { user, token,loading, hasRole, hasAnyRole, hasMinRole } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
       // Si no hay usuario, redirigir a login
-      if (!user) {
+      if (!user || !token) { 
         router.push('/login');
         return;
       }
@@ -37,7 +37,7 @@ export default function ProtectedRoute({
         router.push(fallbackPath);
       }
     }
-  }, [user, loading, router, requiredRole, requiredRoles, minRole, fallbackPath]);
+  }, [user, token, loading, router, requiredRole, requiredRoles, minRole, fallbackPath]);
 
   if (loading) {
     return (
@@ -47,7 +47,7 @@ export default function ProtectedRoute({
     );
   }
 
-  if (!user) {
+   if (!user || !token) {
     return null;
   }
 

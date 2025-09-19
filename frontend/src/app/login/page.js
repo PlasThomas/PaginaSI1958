@@ -29,7 +29,7 @@ export default function LoginPage() {
         setError(response.error);
       } else {
         console.log('Usuario logueado:', response.user);
-        authLogin(response.user);
+        authLogin(response.user, response.token);
         router.push(response.user.role === "admin" ? "/admin" : "/users");
       }
     } catch (err) {
