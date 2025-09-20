@@ -9,7 +9,16 @@ import os, jwt
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, 
+    origins=[
+        "http://localhost:3000",    
+        "http://54.242.12.78:3000",    
+        "http://172.31.33.190:3000",
+    ],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    supports_credentials=True
+)
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 app.config['DEBUG'] = True
