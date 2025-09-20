@@ -12,6 +12,9 @@ app = Flask(__name__)
 CORS(app)
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+app.config['DEBUG'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
 # Funciones de bcrypt
 def encrypt_password(password):
     salt = bcrypt.gensalt()
@@ -169,3 +172,7 @@ def logout():
         'success': True,
         'message': 'Sesión cerrada exitosamente'
     })
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

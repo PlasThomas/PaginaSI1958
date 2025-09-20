@@ -1,4 +1,4 @@
-const API_URL = process.env.FLASK_API;
+const API_URL = process.env.NEXT_PUBLIC_FLASK_API;
 
 export async function signup(userData) {
   const res = await fetch(`${API_URL}/api/signup`, {
