@@ -37,7 +37,7 @@ export default function ProtectedRoute({
         router.push(fallbackPath);
       }
     }
-  }, [user, token, loading, router, requiredRole, requiredRoles, minRole, fallbackPath]);
+  }, [user, token, loading, router, requiredRole, requiredRoles, minRole, fallbackPath, hasRole, hasAnyRole, hasMinRole ]);
 
   if (loading) {
     return (
