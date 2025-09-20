@@ -4,7 +4,7 @@ npm install
 echo "- Instalacion de paquetes de npm"
 cd ../backend/
 echo "Instalacion de backend"
-python -m venv flaskback
+python3 -m venv flaskback
 source flaskback/bin/activate
 echo "- Creacion de entorno virtual"
 pip install Flask flask-cors pymongo python-dotenv bcrypt jwt
