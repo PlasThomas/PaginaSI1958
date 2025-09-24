@@ -5,7 +5,7 @@ export default function AdminPage() {
     <ProtectedRoute requiredRole="admin">
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md text-center">
-          <h1 className="text-3xl font-bold text-blue-600 mb-4">🔐 Panel de Administración</h1>
+          <h1 className="text-3xl font-bold text-blue-600 mb-4"> Panel de Administración</h1>
           <p className="text-gray-600 mb-6">Esta página es exclusiva para usuarios con rol de administrador</p>
           <div className="bg-blue-50 p-4 rounded border border-blue-200">
             <p className="text-blue-800 font-medium">Funciones disponibles:</p>

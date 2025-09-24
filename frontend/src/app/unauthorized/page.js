@@ -1,6 +1,6 @@
-'use client'; // Si usas App Router, asegúrate de tener esto
+'use client'; 
 
-import Link from 'next/link'; // ✅ Importar Link
+import Link from 'next/link';
 
 export default function UnauthorizedPage() {
   return (

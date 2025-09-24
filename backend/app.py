@@ -15,14 +15,11 @@ CORS(app,
         "http://54.242.12.78:3000",    
         "http://172.31.33.190:3000",
     ],
-    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
     supports_credentials=True
 )
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-app.config['DEBUG'] = True
-app.config['PROPAGATE_EXCEPTIONS'] = True
 
 # Funciones de bcrypt
 def encrypt_password(password):
@@ -36,7 +33,7 @@ def check_password(password, hashed_password):
         hashed_password.encode('utf-8')
     )
 
-# Función de JWT
+# Funciones de JWT
 def generate_token(user_id, email, role):
     payload = {
         "id": str(user_id),
