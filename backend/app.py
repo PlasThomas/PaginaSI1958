@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
-import os, jwt
+import os
+import jwt
 
 load_dotenv()
 
@@ -12,7 +13,8 @@ app = Flask(__name__)
 CORS(app, 
     origins=[
         "http://localhost:3000",    
-        "http://54.242.12.78:3000",    
+        "https://awsi.sbs",    
+        "https://www.awsi.sbs",    
         "http://172.31.33.190:3000",
     ],
     methods=["GET", "POST", "OPTIONS"],
@@ -64,10 +66,23 @@ except Exception as e:
 users_collection = db['usuarios']
 
 # APIs de backend.
-@app.route("/api/login", methods=['POST'])
+@app.route("/api/login", methods=['POST', 'OPTIONS'])
 def login():
     try:
+        if request.method == "OPTIONS":
+            response = jsonify()
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            return response
+
+        if not request.is_json:
+            return jsonify({
+                'success': False,
+                'error': 'Content-Type debe ser application/json'
+            }), 400
+
         data = request.get_json()
+
         # Validar datos requeridos
         if not data.get('email') or not data.get('password'):
             return jsonify({
@@ -94,7 +109,7 @@ def login():
         
         token = generate_token(user['_id'], user['email'], user['role'])
 
-        return jsonify({
+        response = jsonify({
             'success': True,
             'message': 'Login exitoso',
             "token": token,
@@ -106,11 +121,19 @@ def login():
                 'email': user['email']
             }
         })
+
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
     except Exception as e:
-        return jsonify({
+        error_msg = str(e)
+        error_response = jsonify({
             'success': False,
-            'error': 'Error interno del servidor'
-        }), 500
+            'error': error_msg
+        })
+        error_response.status_code = 500
+        error_response.headers.add('Access-Control-Allow-Origin', '*')
+        return error_response
+
 
 @app.route("/api/signup", methods=['POST'])
 def signup():
