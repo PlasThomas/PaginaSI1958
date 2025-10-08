@@ -5,7 +5,6 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <div className="home-container">
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -24,13 +23,12 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-image">
-          {/* Reemplaza con tu propia imagen */}
           <div className="placeholder-image">
             <span>Imagen Hero</span>
           </div>
         </div>
       </section>
-
+    
       <section className="features-section">
         <div className="container">
           <h2 className="section-title">¿Por qué Patos?</h2>
